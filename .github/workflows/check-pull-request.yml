@@ -1,0 +1,93 @@
+name: Check Pull Request
+on: [pull_request]
+jobs:
+  basic-checks:
+    runs-on: ubuntu-latest
+    outputs:
+      added-files: ${{ steps.files.outputs.added }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+      - name: Checkout LFS objects
+        run: git lfs checkout
+      - id: files
+        uses: jitterbit/get-changed-files@v1
+      - name: Check if pull request removes benchmarks
+        run: |
+          if [[ "${{ steps.files.outputs.removed }}" != "" ]] ; then
+            echo "This pull requests removes benchmarks!" ; exit 1
+          fi
+      - name: Check if pull request modifies benchmarks
+        run: |
+          if ! ([[ "${{ steps.files.outputs.modified }}" == "" ]] || [[ "${{ steps.files.outputs.modified }}" == ".gitattributes" ]])
+          then
+            echo "This pull requests modifies benchmarks!" ; exit 1
+          fi
+      - name: Check if folder structure and filenames are correct
+        run: |
+          valid_filenames="^(incremental|non-incremental)\/[A-Z_]+\/20[012][0-9][01][0-9][0123][0-9]-.+\/.+\.smt2$"
+          status=0
+          for added_file in ${{ steps.files.outputs.added }}; do
+            if ! [[ ${added_file} =~ $valid_filenames ]] ;  then
+              echo "The file ${added_file} has an inappropriate path!"
+              status=1
+            fi
+            if ! ./quick-check.sh ${added_file} ; then
+              status=1
+            fi
+          done
+          exit $status
+  check-lfs-tracking:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+      - name: Checkout LFS objects
+        run: git lfs checkout
+      - name: Check if exactly the files >=10mb are in tracked by LFS
+        run: |
+          git lfs ls-files -n | sed 's/^/.\//' | sort > action-in-lfs
+          find . -type f -size +10M -not -path '*/\.*' | sort > action-big-files
+          if [[ $(comm -3 action-in-lfs action-big-files) ]]; then
+            echo "::error ::Files traced by LFS do not correspond to files >10MB"
+            echo "Files >10MB not tracked by LFS:"
+            comm -1 action-in-lfs action-big-files
+            echo "Files tracked by LFS not >10MB:"
+            comm -2 action-in-lfs action-big-files
+            exit 1
+          fi
+  check-with-dolmen:
+    needs: [basic-checks, check-lfs-tracking]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+      - name: Checkout LFS objects
+        run: git lfs checkout
+      - name: Cache Dolmen
+        id: dolmen-cache
+        uses: actions/cache@v2
+        with:
+          key: dolmen-linux-amd64
+          path: ./dolmen-linux-amd64
+      - name: Install dolmen
+        run: |
+          if [ "[${{steps.dolmen-cache.outputs.cache-hit}}]" = "[]" ]; then
+            wget https://github.com/Gbury/dolmen/releases/download/v0.6/dolmen-linux-amd64
+          fi
+          chmod +x ./dolmen-linux-amd64
+      - name: Check files
+        run: |
+          status=0
+          for added_file in ${{ needs.basic-checks.outputs.added-files }}; do
+            ./dolmen-linux-amd64 -i smt2 --check-headers=true --header-lang-version=2.6 ${added_file}
+            if [ $? -ne 0 ] ;  then
+              echo "Dolmen reported problems with ${added_file}."
+              status=1
+            fi
+          done
+          exit $status
+

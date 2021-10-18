@@ -1,4 +1,4 @@
-# SMT-LIB-submission
+# SMT-LIB Benchmark Submission
 
 This repository serves as a staging repository for benchmarks submitted
 for inclusion in the SMT-LIB library.  To submit new benchmarks fork this

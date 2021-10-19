@@ -7,10 +7,6 @@ jobs:
       added-files: ${{ steps.files.outputs.added }}
     steps:
       - uses: actions/checkout@v2
-        with:
-          lfs: true
-      - name: Checkout LFS objects
-        run: git lfs checkout
       - id: files
         uses: jitterbit/get-changed-files@v1
       - name: Check if pull request removes benchmarks
@@ -38,35 +34,11 @@ jobs:
             fi
           done
           exit $status
-  check-lfs-tracking:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          lfs: true
-      - name: Checkout LFS objects
-        run: git lfs checkout
-      - name: Check if exactly the files >=10mb are in tracked by LFS
-        run: |
-          git lfs ls-files -n | sed 's/^/.\//' | sort > action-in-lfs
-          find . -type f -size +10M -not -path '*/\.*' | sort > action-big-files
-          if [[ $(comm -3 action-in-lfs action-big-files) ]]; then
-            echo "::error ::Files traced by LFS do not correspond to files >10MB"
-            echo "Files >10MB not tracked by LFS:"
-            comm -1 action-in-lfs action-big-files
-            echo "Files tracked by LFS not >10MB:"
-            comm -2 action-in-lfs action-big-files
-            exit 1
-          fi
   check-with-dolmen:
-    needs: [basic-checks, check-lfs-tracking]
+    needs: basic-checks
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          lfs: true
-      - name: Checkout LFS objects
-        run: git lfs checkout
       - name: Cache Dolmen
         id: dolmen-cache
         uses: actions/cache@v2

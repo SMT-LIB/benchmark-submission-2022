@@ -16,9 +16,17 @@ jobs:
           fi
       - name: Check if pull request modifies benchmarks
         run: |
-          if ! ([[ "${{ steps.files.outputs.modified }}" == "" ]] || [[ "${{ steps.files.outputs.modified }}" == ".gitattributes" ]])
+          if ! [[ "${{ steps.files.outputs.modified }}" == "" ]]
           then
             echo "This pull requests modifies benchmarks!" ; exit 1
+          fi
+      - name: Check if duplicated benchmarks are present
+        run: |
+          DUPES=`find . ! -empty -type f -name *smt2 -exec md5sum {} + | sort | uniq -w32 -d  | cut -d ' ' -f 3`
+          if ! [[ "[$DUPES]" = "[]" ]]; then
+            echo "Some benchmarks are duplicates of other benchmarks."
+            echo $DUPES
+            exit 1
           fi
       - name: Check if folder structure and filenames are correct
         run: |

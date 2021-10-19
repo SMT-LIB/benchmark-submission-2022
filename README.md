@@ -7,9 +7,6 @@ files must be valid SMT-LIB files and contain a few additional headers.
 The folder structure must also be appropriate.  The pull request is
 automatically checked by Github and manually by us.
 
-A benchmark is an *incremental* benchmark if it contains more than one
-`check-sat` command.
-
 To check that the benchmarks fulfill the requirements
 upfront the `quick-check.sh` script and the tool
 [dolmen](https://github.com/Gbury/dolmen/) can be used.  For example, with
@@ -20,9 +17,17 @@ $ ./quick-check.sh non-incremental/UF/20211018-Test/test.smt2
 $ dolmen -i smt2 --check-headers=true --header-lang-version=2.6 non-incremental/UF/20211018-Test/test.smt2
 ```
 
-The `quick-check.sh` script is fast, but not perfectly accurate.
-Dolmen, on the other hand, aims at supporting the SMT-LIB standard
-precisely.
+The `quick-check.sh` uses grep and other shell tools to perform some
+basic checks on the benchmark and the folder structure.  It is fast,
+but not perfectly accurate.  Dolmen is a parser and type checker that
+aims at following the SMT-LIB standard precisely.
+
+If the set of benchmarks contains benchmarks larger than 50MB, adding
+them to the Git repository is not feasible.  Please reach out to us
+in that case.
+
+In the following, a benchmark is an *incremental* benchmark if it contains
+more than one `check-sat` command.
 
 ## Benchmark Requirements
 
@@ -83,7 +88,7 @@ must be issued for each `check-sat` command.  In this case the
 `set-info :status` commands should be placed in the line just before
 the corresponding `check-sat` command.
 
-## Folder Structure and LFS
+## Folder Structure
 
 The basic structure of the folders is:
 
@@ -105,14 +110,13 @@ is written as `YYYYMMDD`.
 Benchmarks can be nested within a deeper directory structure below the
 set directory.  The nesting should be sensible.
 
-Benchmarks larger than 10MB should be stored in
-[Git LFS](https://git-lfs.github.com/).  Use `git lfs track <file>` to
-add a file to LFS.  This adds `<file>` to the `.gitattributes` file
-in the current working directory.  To avoid the creation of additional
-`.gitattributes` files the `track` command should only be used from the
-root of the repository.
-To find all benchmarks that exceed this limit, one can use
-```
-find . -type f -size +10M -not -path '*/\.*'
-```
+## Contact
+
+The benchmark library is co-maintained by:
+
+- Clark Barrett <barrett@cs.stanford.edu>
+- Pascal Fontaine <pascal.fontaine@uliege.be>
+- Aina Niemetz <niemetz@cs.stanford.edu>
+- Mathias Preiner <preiner@cs.stanford.edu>
+- Hans-Jörg Schurr <hans-jorg.schurr@inria.fr>
 

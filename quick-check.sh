@@ -14,7 +14,7 @@ function print_error()
   echo "::error file=$BENCHMARK::$*"
 }
 
-echo "::group::{Checking $BENCHMARK}"
+echo "::group::Checking \"$BENCHMARK\""
 
 info "File" "$BENCHMARK"
 

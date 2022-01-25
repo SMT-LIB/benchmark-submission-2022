@@ -48,7 +48,6 @@ are equal.
 (set-info :category "crafted")
 (set-info :status sat)
 ; benchmark generated from python API
-(set-info :status unknown)
 (declare-fun w__0 () Int)
 (declare-fun v__0 () Int)
 (declare-fun w__1 () Int)

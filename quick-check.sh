@@ -1,99 +1,109 @@
 #!/usr/bin/env bash
 
 STATUS=0
+BENCHMARK="$1"
 
-echo "File:	$1"
+function info()
+{
+  printf "%20s: $2\n" "$1"
+}
 
-PATH_LOGIC=`echo $1 | cut -d/ -f2`
-echo "Logic in path:	$PATH_LOGIC"
-PATH_TYPE=`echo $1 | cut -d/ -f1`
-echo "Type in path:	$PATH_TYPE"
-
-LOGIC=`grep -m 1 "^(set-logic " "$1" | sed "s/^(set-logic //;s/\([A-Z_]*\).*/\1/"`
-echo "Logic:	$LOGIC"
-
-if [ "[$LOGIC]" = "[]" ] ; then
+function print_error()
+{
   STATUS=1
-  echo "::error file=$1::No set-logic command issued!"
-else
-  if ! [ "[$LOGIC]" = "[$PATH_LOGIC]" ] ; then
-    STATUS=1
-    echo "::error file=$1::Declared logic does not fit logic in file path!"
-  fi
+  echo "::error file=$BENCHMARK::$*"
+}
+
+echo "::group::{Checking $BENCHMARK}"
+
+info "File" "$BENCHMARK"
+
+PATH_LOGIC=$(echo $BENCHMARK | cut -d/ -f2)
+info "Logic in path" "$PATH_LOGIC"
+PATH_TYPE=$(echo $BENCHMARK | cut -d/ -f1)
+info "Type in path" "$PATH_TYPE"
+
+LOGIC=$(grep -oP -m 1 "^\(set-logic \K.*(?=\))" "$BENCHMARK")
+info "Logic in file" "$LOGIC"
+
+if [ -z "$LOGIC" ] ; then
+  print_error "No set-logic command issued."
+elif [ "$LOGIC" != "$PATH_LOGIC" ] ; then
+  print_error "Declared logic does not fit logic in file path."
 fi
 
 # ASCII, UTF-8 (missing in the if: ISO-8859)
-ENCODING=`file -ib "$1" | sed "s/.*charset=\([^ ;]*\).*/\1/"`
-echo "Encoding:	$ENCODING"
+ENCODING=$(file -ib "$BENCHMARK" | sed "s/.*charset=\([^ ;]*\).*/\1/")
+info "Encoding" "$ENCODING"
 
-if ! ([ "[$ENCODING]" = "[us-ascii]" ] || [ "[$ENCODING]" = "[utf-8]" ]) ;
+if ! ([ "$ENCODING" = "us-ascii" ] || [ "$ENCODING" = "utf-8" ]) ;
 then
-    STATUS=1
-    echo "::error file=$1::Unsupported encoding: $ENCODING"
+    print_error "Unsupported encoding: $ENCODING"
 fi
 
-VERSION=`grep -m 1 "^(set-info :smt-lib-version " "$1" | sed "s/(set-info :smt-lib-version //;s/)//"`
-echo "SMT-LIB:	$VERSION"
-if ! [ "[$VERSION]" = "[2.6]" ] ; then
-    STATUS=1
-    echo "::error file=$1::Unsupported SMT-LIB version: $VERSION"
+VERSION=$(grep -oP "^\(set-info :smt-lib-version \K.*(?=\))" "$BENCHMARK")
+info "SMT-LIB" "$VERSION"
+[ "$VERSION" != "2.6" ] && print_error "Unsupported SMT-LIB version: $VERSION"
+
+SOURCE=$(grep -l -m 1 "(set-info :source " "$BENCHMARK")
+[ -z "$SOURCE" ] && print_error "No source given."
+
+# Matches only the license part of (set-info :license "<license>")
+LICENSE=$(grep -oP ":license \"\K.*(?=\")" "$BENCHMARK")
+[ "$LICENSE" = "https://creativecommons.org/licenses/by/4.0/" ] && LICENSE="CC"
+[ "$LICENSE" = "https://creativecommons.org/licenses/by-nc/4.0/" ] && LICENSE="CC-NC"
+info "License" "$LICENSE"
+[ -z "$LICENSE" ] && print_error "No license given."
+
+# Check correct value of :category.
+CATEGORY=$(grep -oP -m 1 "^\(set-info :category \"\K.*(?=\")" "$BENCHMARK")
+info "Category" "$CATEGORY"
+if ! echo "crafted random industrial" | grep -w -q "$CATEGORY"; then
+    print_error "Category is neither crafted, random, nor industrial, but: " \
+      "'$CATEGORY'."
 fi
 
-SOURCE=`grep -l -m1 "(set-info :source " "$1"`
-if [ "[$SOURCE]" = "[]" ] ; then
-    STATUS=1
-    echo "::error file=$1::No source given."
+# Check for (check-sat) or (check-sat-assuming ...)
+NUM_CHECK_SAT=$(grep -c "(check-sat)\|(check-sat-assuming" "$BENCHMARK")
+[ "$NUM_CHECK_SAT" = "0" ] && print_error "No check-sat command issued."
+
+# Check (exit) command
+EXIT=$(grep -c "(exit)" "$BENCHMARK")
+[ "$EXIT" = "0" ] && print_error "No exit command found."
+[ "$EXIT" -gt "1" ] && print_error "Multiple exit commands defined."
+
+# Check if status is valid
+INVALID_STATUS=$(
+  grep -oP "^ *\(set-info :status \K.*(?=\))" "$BENCHMARK" | \
+    sort -u | \
+    grep -v -w -E "unknown\|unsat\|sat" |\
+    tr '\n' ' ')
+[ -n "$INVALID_STATUS" ] && \
+  print_error "Invalid status found: $INVALID_STATUS"
+
+# Number of check-sat/check-sat-assuming calls needs to be equal to number of
+# (set-info :status ...) calls.
+NUM_STATUS=$(grep -c "^ *(set-info :status" "$BENCHMARK")
+[ "$NUM_STATUS" != "$NUM_CHECK_SAT" ] && \
+  print_error "Number of (set-info :status ...) does not match number of " \
+              "(check-sat)/(check-sat-assuming) calls."
+
+[ "$NUM_CHECK_SAT" = "1" ] && TYPE="non-incremental" || TYPE="incremental"
+info "Type of file" "$TYPE"
+
+# Non-incremental vs. incremental checks
+[ "$TYPE" != "$PATH_TYPE" ] && \
+  print_error "Benchmark appears to be $TYPE but is in $PATH_TYPE path."
+
+# Search for push/pop in non-incremental benchmarks
+if [ "$TYPE" == "non-incremental" ]; then
+  HAVE_PUSH=$(grep -m 1 "^ *(push " "$BENCHMARK")
+  HAVE_POP=$(grep -m 1 "^ *(pop " "$BENCHMARK")
+  [ -n "$HAVE_PUSH" ] && \
+    print_error "Found (push ...) in non-incremental benchmark."
+  [ -n "$HAVE_POP" ] && \
+    print_error "Found (pop ...) in non-incremental benchmark."
 fi
 
-LICENSE=`grep -m1 "(set-info :license \".*\")" "$1" | sed "s/[^\"]*\"//;s/\".*//"`
-[ "[$LICENSE]" = "[https://creativecommons.org/licenses/by/4.0/]" ] && LICENSE="CC"
-[ "[$LICENSE]" = "[https://creativecommons.org/licenses/by-nc/4.0/]" ] && LICENSE="CC-NC"
-echo "License:	$LICENSE"
-if [ "[$LICENSE]" = "[]" ] ; then
-    STATUS=1
-    echo "::error file=$1::No license given."
-fi
-
-# TODO check presence and correct value
-CATEGORY=`grep -m 1 "^(set-info :category " "$1" | sed "s/(set-info :category \"//;s/\")//"`
-echo "Category:	$CATEGORY"
-if ! ([ "[$CATEGORY]" = "[crafted]" ] || [ "[$CATEGORY]" = "[random]" ] || [ "[$CATEGORY]" = "[industrial]" ]) ;
-then
-    STATUS=1
-    echo "::error file=$1::Category is neither crafted, random, nor industrial, but: $CATEGORY."
-fi
-
-CHECK_SAT=`grep -l -m1 "(check-sat)" "$1"`
-if [ "[$CHECK_SAT]" = "[]" ] ; then
-    STATUS=1
-    echo "::error file=$1::No check-sat command issued."
-fi
-
-EXIT=`grep -l -m1 "(exit)" "$1"`
-if [ "[$EXIT]" = "[]" ] ; then
-    STATUS=1
-    echo "::error file=$1::No exit command issued."
-fi
-
-INVALID_STATUS=`grep "^ *(set-info :status" "$1" | grep -v ":status unsat" | grep -v ":status sat"`
-if ! [ "[$INVALID_STATUS]" = "[]" ] ; then
-    STATUS=1
-    echo "::error file=$1::Invalid status defined."
-fi
-
-NUM_STATUS=`grep -c "^ *(set-info :status" "$1"`
-NUM_CHECK_SAT=`grep -c "^ *(set-info :status" "$1"`
-
-STATUS=`grep -m 1 "^(set-info :status " "$1" | sed "s/(set-info :status //;s/).*//"`
-
-
-[ "[$NUM_CHECK_SAT]" = "[1]" ] && INC="NO" || INC="YES"
-echo "Incremental:	$INC"
-[ "[$PATH_TYPE]" = "[incremental]" ] && PATH_INC="YES" || PATH_INC="NO"
-
-if ! [ "[$INC]" = "[$PATH_INC]" ] ; then
-    STATUS=1
-    echo "::error file=$1::Benchmark in wrong path with respect to type."
-fi
-
-exit $(($STATUS))
+exit $STATUS
+echo "::endgroup::"

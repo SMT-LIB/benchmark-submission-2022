@@ -500,3 +500,4 @@ Target solver: Z3
 (pop 14)
 
 ; maximum: 51939397989999
+(exit)

@@ -359,3 +359,4 @@ are equal.
  (let (($x850 (and (= w__1 v__0) (= w__2 v__1) (= w__3 v__2) (= w__4 v__3) (= w__5 v__4) (= w__0 v__5))))
  (not $x850)))
 (check-sat)
+(exit)

@@ -219,3 +219,4 @@ are equal.
  (let (($x432 (and (= w__1 v__0) (= w__2 v__1) (= w__3 v__2) (= w__0 v__3))))
  (not $x432)))
 (check-sat)
+(exit)

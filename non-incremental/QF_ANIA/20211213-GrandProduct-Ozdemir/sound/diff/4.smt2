@@ -211,3 +211,4 @@ are equal.
  (let (($x275 (and (= w__1 v__0) (= w__2 v__1) (= w__3 v__2) (= w__0 v__3))))
  (not $x275)))
 (check-sat)
+(exit)

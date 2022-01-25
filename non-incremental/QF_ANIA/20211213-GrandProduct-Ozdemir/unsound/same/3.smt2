@@ -127,3 +127,4 @@ are equal.
 (assert
  (not (and (= w__1 v__0) (= w__2 v__1) (= w__0 v__2))))
 (check-sat)
+(exit)

@@ -76,7 +76,9 @@ EXIT=$(grep -c "(exit)" "$BENCHMARK")
 INVALID_STATUS=$(
   grep -oP "^ *\(set-info :status \K.*(?=\))" "$BENCHMARK" | \
     sort -u | \
-    grep -v -w -E "unknown\|unsat\|sat" |\
+    grep -v -w "unknown" | \
+    grep -v -w "unsat" | \
+    grep -v -w "sat" | \
     tr '\n' ' ')
 [ -n "$INVALID_STATUS" ] && \
   print_error "Invalid status found: $INVALID_STATUS"

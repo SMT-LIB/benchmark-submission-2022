@@ -6,6 +6,7 @@ IsoTriangle-Bottema1.19a:
 
 This problem was added to SMT-LIB by Tereso del Rio and Matthew England.| )
 (set-info :category "industrial")
+(set-info :license "https://creativecommons.org/licenses/by/4.0/")
 (set-info :status sat)
 (set-logic QF_NRA)
 (declare-fun m () Real)

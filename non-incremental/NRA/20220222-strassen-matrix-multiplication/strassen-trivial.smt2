@@ -9,7 +9,7 @@ Target solver: cvc4, z3;
 Publications: https://en.wikipedia.org/wiki/Strassen_algorithm
 |)
 (set-info :license "https://creativecommons.org/licenses/by/4.0/")
-(set-info :category crafted)
+(set-info :category "crafted")
 (set-info :status sat)
 
 (assert 
@@ -26,3 +26,4 @@ Publications: https://en.wikipedia.org/wiki/Strassen_algorithm
 
 
 (check-sat)
+(exit)

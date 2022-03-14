@@ -14,7 +14,7 @@ ISSAC '10: Proceedings of the 2010 International Symposium on Symbolic and Algeb
 
 All denominators in the original CAD call got cleared by introducing disjunctions with sign conditions:
 a/b == c/d --> a d==b c && b<>0 && d<>0
-a/b > c  --> a >=b c && b >0  ||  a <= b c && b < 0
+a/b >= c  --> a >=b c && b >0  or ( a <= b c && b < 0)
 |)
 (set-info :license "https://creativecommons.org/licenses/by/4.0/")
 (set-info :status unsat)

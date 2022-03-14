@@ -12,9 +12,9 @@ S. Gerhold and M. Kauers, A Procedure for Proving Special Function Inequalities 
 ISSAC '05: Proceedings of the 2005 international symposium on Symbolic and algebraic computationJuly 2005 Pages 156-162.
 (https://dl.acm.org/doi/10.1145/1073884.1073907)
 
-All denominators in the original CAD call got cleared by introducing disjunctions with sign conditions:
+All denominators in the original CAD call got cleared by introducing disjunctions with sign conditions: 
 a/b == c/d --> a d==b c && b<>0 && d<>0
-a/b > c  --> a >=b c && b >0  ||  a <= b c && b < 0
+a/b >= c  --> a >=b c && b >0  or ( a <= b c && b < 0)
 |)
 (set-info :license "https://creativecommons.org/licenses/by/4.0/")
 (set-info :status sat)

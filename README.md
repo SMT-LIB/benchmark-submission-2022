@@ -54,11 +54,11 @@ where:
   * Target solver: the solvers that were initially used to check the benchmarks;
   * Publications: references to related publications.
 This can be followed by any other useful information in free text. 
-- ```<category>``` is either "crafted", indicating that it was hand-made,
-"random", indicating that it was generated randomly, or "industrial"
-(everything else).  Note that the category should be in quotes.
-- ```<status>``` is either sat or unsat according to the status of the benchmark,
-  or unknown if not known.
+- ```<category>``` is either `"crafted"`, indicating that it was hand-made,
+`"random"`, indicating that it was generated randomly, or `"industrial"`
+(everything else).  Note that the quotes are significant.
+- ```<status>``` is either `sat` or `unsat` according to the status of the benchmark,
+  or `unknown` if not known.
 
 We encourage to distribute benchmarks under
 the [Creative Commons Attribution 4.0 International
@@ -66,7 +66,7 @@ License](https://creativecommons.org/licenses/by/4.0/), but submitters can
 specify their own licence in the benchmark itself using the ```(set-info
 :license "licence string")``` command.
 
-Below is an example:
+An example:
 
 ```
 (set-info :smt-lib-version 2.6)

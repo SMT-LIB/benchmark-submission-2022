@@ -63,7 +63,7 @@ jobs:
         run: |
           status=0
           for added_file in ${{ needs.basic-checks.outputs.added-files }}; do
-            ./dolmen-linux-amd64 -i smt2 --check-headers=true --header-lang-version=2.6 ${added_file}
+            ./dolmen-linux-amd64 -i smt2 --strict=false --check-headers=true --header-lang-version=2.6 ${added_file}
             if [ $? -ne 0 ] ;  then
               echo "Dolmen reported problems with ${added_file}."
               status=1

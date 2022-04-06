@@ -107,5 +107,12 @@ if [ "$TYPE" == "non-incremental" ]; then
     print_error "Found (pop ...) in non-incremental benchmark."
 fi
 
+# Check quantified logic
+NUM_QUANT=$(grep -c "(forall \|(exists " "$BENCHMARK")
+[[ "$LOGIC" == "QF_"* && "$NUM_QUANT" != "0" ]] && \
+  print_error "Quantifiers detected in quantifier-free logic."
+[[ "$LOGIC" != "QF_"* && "$NUM_QUANT" == "0" ]] && \
+  print_error "No quantifiers detected in quantified logic."
+
 exit $STATUS
 echo "::endgroup::"

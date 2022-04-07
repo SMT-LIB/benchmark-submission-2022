@@ -32,6 +32,9 @@ elif [ "$LOGIC" != "$PATH_LOGIC" ] ; then
   print_error "Declared logic does not fit logic in file path."
 fi
 
+NLOGIC=$(grep -c "^(set-logic " "$BENCHMARK")
+[ "$NLOGIC" -gt "1" ] && print_error "Multiple set-logic commands defined."
+
 # ASCII, UTF-8 (missing in the if: ISO-8859)
 ENCODING=$(file -ib "$BENCHMARK" | sed "s/.*charset=\([^ ;]*\).*/\1/")
 info "Encoding" "$ENCODING"

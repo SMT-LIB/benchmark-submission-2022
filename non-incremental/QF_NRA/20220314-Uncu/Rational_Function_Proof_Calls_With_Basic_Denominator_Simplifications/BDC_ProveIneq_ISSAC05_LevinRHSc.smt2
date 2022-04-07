@@ -20,7 +20,6 @@ a/b > c/d --> a d^2 >=b^2 c && b<>0 && d<>0
 (set-info :status sat)
 (set-info :category "industrial")
 
-(set-logic QF_NRA)
 (declare-fun V1 () Real)
 (declare-fun V2 () Real)
 (declare-fun x () Real)

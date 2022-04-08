@@ -15,13 +15,8 @@ Target solver: z3
 (declare-fun x0 () Int)
 (declare-fun y0 () Int)
 (assert (= (+ (* x0 x0 x0) (* y0 y0 y0)) t))
-<<<<<<< HEAD
 (assert (> x0 0))
 (assert (> y0 0))
-=======
-(assert (>= x0 0))
-(assert (>= y0 0))
->>>>>>> upstream/master
 (check-sat)
 ;;(get-assignment)
 ;;(get-model)

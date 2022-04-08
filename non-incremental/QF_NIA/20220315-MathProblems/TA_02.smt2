@@ -18,17 +18,10 @@ Target solver: z3
 (declare-fun y1 () Int)
 (assert (= (+ (* x0 x0 x0) (* y0 y0 y0)) t))
 (assert (= (+ (* x1 x1 x1) (* y1 y1 y1)) t))
-<<<<<<< HEAD
 (assert (> x0 0))
 (assert (> y0 0))
 (assert (> x1 0))
 (assert (> y1 0))
-=======
-(assert (>= x0 0))
-(assert (>= y0 0))
-(assert (>= x1 0))
-(assert (>= y1 0))
->>>>>>> upstream/master
 (assert (distinct x0 x1))
 (assert (distinct x0 y1))
 (assert (distinct y0 x1))

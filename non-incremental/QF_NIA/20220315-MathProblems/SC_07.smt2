@@ -1251,7 +1251,6 @@ Target solver: z3
 (assert (distinct x_6_4 x_6_5))
 (assert (distinct x_6_4 x_6_6))
 (assert (distinct x_6_5 x_6_6))
-<<<<<<< HEAD
 (assert (> x_0_0 0))
 (assert (> x_0_1 0))
 (assert (> x_0_2 0))
@@ -1301,8 +1300,6 @@ Target solver: z3
 (assert (> x_6_4 0))
 (assert (> x_6_5 0))
 (assert (> x_6_6 0))
-=======
->>>>>>> upstream/master
 (check-sat)
 ;;(get-assignment)
 ;;(get-model)

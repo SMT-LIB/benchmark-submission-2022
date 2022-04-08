@@ -3353,7 +3353,6 @@ Target solver: z3
 (assert (distinct x_8_6 x_8_7))
 (assert (distinct x_8_6 x_8_8))
 (assert (distinct x_8_7 x_8_8))
-<<<<<<< HEAD
 (assert (> x_0_0 0))
 (assert (> x_0_1 0))
 (assert (> x_0_2 0))
@@ -3435,8 +3434,6 @@ Target solver: z3
 (assert (> x_8_6 0))
 (assert (> x_8_7 0))
 (assert (> x_8_8 0))
-=======
->>>>>>> upstream/master
 (check-sat)
 ;;(get-assignment)
 ;;(get-model)

@@ -28,13 +28,10 @@ Target solver: z3
 (assert (distinct x_0_1 x_1_0))
 (assert (distinct x_0_1 x_1_1))
 (assert (distinct x_1_0 x_1_1))
-<<<<<<< HEAD
 (assert (> x_0_0 0))
 (assert (> x_0_1 0))
 (assert (> x_1_0 0))
 (assert (> x_1_1 0))
-=======
->>>>>>> upstream/master
 (check-sat)
 ;;(get-assignment)
 ;;(get-model)

@@ -14,12 +14,14 @@ jobs:
           if [[ "${{ steps.files.outputs.removed }}" != "" ]] ; then
             echo "This pull requests removes benchmarks!" ; exit 1
           fi
-      - name: Check if pull request modifies benchmarks
-        run: |
-          if ! [[ "${{ steps.files.outputs.modified }}" == "" ]]
-          then
-            echo "This pull requests modifies benchmarks!" ; exit 1
-          fi
+      # Disabled since this prevents benchmark fixes by the authors after
+      # merging a PR.
+      #- name: Check if pull request modifies benchmarks
+      #  run: |
+      #    if ! [[ "${{ steps.files.outputs.modified }}" == "" ]]
+      #    then
+      #      echo "This pull requests modifies benchmarks!" ; exit 1
+      #    fi
       - name: Check if duplicated benchmarks are present
         run: |
           DUPES=`find . ! -empty -type f -name *smt2 -exec md5sum {} + | sort | uniq -w32 -d  | cut -d ' ' -f 3`

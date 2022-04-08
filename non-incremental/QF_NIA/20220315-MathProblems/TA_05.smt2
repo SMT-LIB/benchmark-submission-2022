@@ -27,6 +27,7 @@ Target solver: z3
 (assert (= (+ (* x2 x2 x2) (* y2 y2 y2)) t))
 (assert (= (+ (* x3 x3 x3) (* y3 y3 y3)) t))
 (assert (= (+ (* x4 x4 x4) (* y4 y4 y4)) t))
+<<<<<<< HEAD
 (assert (> x0 0))
 (assert (> y0 0))
 (assert (> x1 0))
@@ -37,6 +38,18 @@ Target solver: z3
 (assert (> y3 0))
 (assert (> x4 0))
 (assert (> y4 0))
+=======
+(assert (>= x0 0))
+(assert (>= y0 0))
+(assert (>= x1 0))
+(assert (>= y1 0))
+(assert (>= x2 0))
+(assert (>= y2 0))
+(assert (>= x3 0))
+(assert (>= y3 0))
+(assert (>= x4 0))
+(assert (>= y4 0))
+>>>>>>> upstream/master
 (assert (distinct x0 x1))
 (assert (distinct x0 y1))
 (assert (distinct y0 x1))

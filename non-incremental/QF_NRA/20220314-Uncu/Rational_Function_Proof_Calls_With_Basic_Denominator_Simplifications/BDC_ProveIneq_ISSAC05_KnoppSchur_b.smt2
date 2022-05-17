@@ -18,7 +18,7 @@ a/b == c/d --> a d==b c && b<>0 && d<>0
 a/b > c/d --> a d^2 >=b^2 c && b<>0 && d<>0
 |)
 (set-info :license "https://creativecommons.org/licenses/by/4.0/")
-(set-info :status sat)
+(set-info :status unsat)
 (set-info :category "industrial")
 
 (declare-fun P () Real)

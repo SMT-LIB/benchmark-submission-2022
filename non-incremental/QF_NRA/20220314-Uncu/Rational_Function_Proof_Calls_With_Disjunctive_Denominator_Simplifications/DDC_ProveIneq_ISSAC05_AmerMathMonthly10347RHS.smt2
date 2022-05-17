@@ -14,7 +14,7 @@ ISSAC '05: Proceedings of the 2005 international symposium on Symbolic and algeb
 
 All denominators in the original CAD call got cleared by introducing disjunctions with sign conditions:
 a/b == c/d --> a d==b c && b<>0 && d<>0
-a/b >= c  --> a >=b c && b >0  or ( a <= b c && b < 0)
+a/b > c  --> a >=b c && b >0  or  a <= b c && b < 0
 |)
 (set-info :license "https://creativecommons.org/licenses/by/4.0/")
 (set-info :status unsat)
@@ -22,7 +22,10 @@ a/b >= c  --> a >=b c && b >0  or ( a <= b c && b < 0)
 
 (declare-fun V1 () Real)
 (declare-fun V2 () Real)
-(assert (and (<= 1 V1) (<= 0 V1) (<= (* (* V2 V2) 4) (+ 1 (* V1 4))) (or (and (< 0 (* V2 V2)) (< (* (+ 5 (* V1 4)) (* V2 V2)) (* (* (+ V1 V2) (+ V1 V2)) 4))) (and (< (* V2 V2) 0) (< (* (* (+ V1 V2) (+ V1 V2)) 4) (* (+ 5 (* V1 4)) (* V2 V2)))))))
+(declare-fun V3 () Real)
+(declare-fun V4 () Real)
+(declare-fun V5 () Real)
+(assert (and (= (* (* V1 V1) 4) (+ (- 1) (* V4 4))) (= (* (* V2 V2) 4) (+ 3 (* V4 4))) (= (* (* V3 V3) 4) (+ 7 (* V4 4))) (< 0 V1) (< 0 V2) (< 0 V3) (< 0 V5) (or (and (< 0 V5) (< 0 (+ V4 V5))) (and (< V5 0) (< (+ V4 V5) 0))) (or (and (< 0 (+ V4 V5)) (< 0 (+ (* V5 2) (* V4 (+ 1 V5))))) (and (< (+ V4 V5) 0) (< (+ (* V5 2) (* V4 (+ 1 V5))) 0))) (<= 1 V4) (<= 0 V4) (<= 0 (+ 1 V4)) (or (and (< 0 (* V5 2)) (<= (+ (* V4 2) V5) (* (* V2 V5) 2))) (and (< (* V5 2) 0) (<= (* (* V2 V5) 2) (+ (* V4 2) V5)))) (<= (+ (- 1) (* V5 2)) (* V1 2)) (or (and (< 0 (+ (* V4 2) (* V5 2))) (< (* (* V3 (+ V4 V5)) 2) (+ (* V5 3) (* V4 (+ 1 (* V5 2)))))) (and (< (+ (* V4 2) (* V5 2)) 0) (< (+ (* V5 3) (* V4 (+ 1 (* V5 2)))) (* (* V3 (+ V4 V5)) 2))))))
 (check-sat)
 (exit)
 

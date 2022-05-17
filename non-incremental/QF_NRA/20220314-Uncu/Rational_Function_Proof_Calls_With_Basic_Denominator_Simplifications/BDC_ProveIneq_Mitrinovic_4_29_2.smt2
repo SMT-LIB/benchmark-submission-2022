@@ -24,7 +24,7 @@ Extra comment: The original Mitrinovic 4.29 call has an OR statement in the asse
 
 (declare-fun V1 () Real)
 (declare-fun V2 () Real)
-(assert (and (<= 2 V1) (< (* (* (+ (- 1) V1) (+ 1 V1)) 2) (* (* (* (+ 1 V1) (+ 1 V1)) V2) 4)) (<= 1 V1) (<= (* V1 (+ 1 V1)) (+ 1 (* (* (+ 1 V1) (+ 1 V1)) V2))) (< (+ (* V1 V2) 1) (* V1 V1)) (not (= (+ 2 (* V1 2)) 0)) (not (= (+ 1 V1) 0)) (not (= V1 0))))
+(assert (and (<= 2 V1) (< (+ (* (* V1 V1) 2) (- 2)) (* (* (* (+ 1 V1) (+ 1 V1)) V2) 4)) (<= 1 V1) (<= (* V1 (* (+ 1 V1) (+ 1 V1) (+ 1 V1) (+ 1 V1) (+ 1 V1))) (* (* (+ 1 V1) (+ 1 V1)) (+ (* (+ 1 V1) (+ 1 V1)) (* (* (+ 1 V1) (+ 1 V1) (+ 1 V1) (+ 1 V1)) V2)))) (< (* V1 (+ (* V1 V2) 1)) (* V1 V1)) (not (= (+ 2 (* V1 2)) 0)) (not (= (* (+ 1 V1) (+ 1 V1)) 0)) (not (= (+ 1 V1) 0)) (not (= V1 0))))
 (check-sat)
 (exit)
 

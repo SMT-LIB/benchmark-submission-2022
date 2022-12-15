@@ -11,7 +11,7 @@ Input DFA: Video fingerprinting, match input symbols to 1 candidate string(s) of
 |)
 (set-info :license "https://creativecommons.org/licenses/by/4.0/")
 (set-info :category "industrial")
-(set-info :status unknown)
+(set-info :status sat)
 
 
 (declare-fun pred_const_0_0 () (_ BitVec 8))

@@ -14,7 +14,6 @@ Input DFA: Mobile device state
 (set-info :status sat)
 
 
-(set-info :status unknown)
 (declare-fun pred_const_0_0 () (_ BitVec 8))
 (declare-fun pred_const_0_1 () (_ BitVec 8))
 (declare-fun arith_sym_const_0_0 () (_ BitVec 8))

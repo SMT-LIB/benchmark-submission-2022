@@ -1,4 +1,7 @@
-# SMT-LIB Benchmark Submission
+# SMT-LIB Benchmark Submission – 2022
+
+*This repository was used for the SMT-LIB benchmark release 2022.  For new submissions, please open a pull request in the
+[current repository](https://github.com/SMT-LIB/benchmark-submission).*
 
 This repository serves as a staging repository for benchmarks submitted
 for inclusion in the SMT-LIB library.  To submit new benchmarks fork this
